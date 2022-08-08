@@ -10,7 +10,7 @@ public class FileManager {
 
     public FileManager(Path updaterDirectory) {
         this.javaFolder = new File(updaterDirectory.toFile(), "java");
-        this.sizeFile = new File(updaterDirectory.toFile(), ".size");
+        this.sizeFile = new File(updaterDirectory.toFile(), "size");
     }
 
     public void createSizeFile() {

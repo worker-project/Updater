@@ -6,11 +6,8 @@ import fr.flowarg.flowupdater.download.IProgressCallback;
 import fr.flowarg.flowupdater.download.Step;
 
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 
 public class DownloadCallback implements IProgressCallback {
-    private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
     @Override
     public void init(ILogger logger) {
     }
@@ -18,24 +15,39 @@ public class DownloadCallback implements IProgressCallback {
     @Override
     public void step(Step step) {
         //stepLabel.setText(StepInfo.valueOf(step.name()).getDetails());
-        WorkerUpdater.getLogger().debug(StepInfo.valueOf(step.name()).getDetails());
+        WorkerUpdater.getInstance().getLogger().debug(StepInfo.valueOf(step.name()).getDetails());
+        int currentValue = WorkerUpdater.getInstance().getWindow().getProgressBar().getValue();
+        int valueToDisplay = currentValue == 0 ? 10 : currentValue + 10;
+        WorkerUpdater.getInstance().getWindow().getProgressBar().setValue(valueToDisplay);
     }
 
     @Override
     public void onFileDownloaded(Path path) {
         //fileLabel.setText(path.getFileName().toString());
-        WorkerUpdater.getLogger().debug(path.getFileName().toString());
+        path.getFileName().toString();
     }
 
     @Override
     public void update(DownloadList.DownloadInfo info) {
-        WorkerUpdater.getLogger().debug(info.getDownloadedBytes() + " " + info.getTotalToDownloadBytes());
+        try {
+            double progress = (info.getDownloadedBytes() / info.getTotalToDownloadBytes());
+        } catch (ArithmeticException arEx) {
+            return;
+        }
     }
 
     public enum StepInfo {
-        EXTERNAL_FILES("Downloading external files..."),
-        POST_EXECUTIONS("Running post executions..."),
-        END("Finished!");
+        START_DOWNLOAD("Downloading files..."),
+        END_DOWNLOAD("Successfully downloaded files!\n"),
+
+        START_CHECK("Preparing and checking files...\n"),
+        END_CHECK("Successfully prepared and checked files!\n"),
+
+        START_UNZIP("Unzipping java version..."),
+        END_UNZIP("Successfully unzipped java version!\n"),
+
+        START_RENAME("Renaming unzipped java version..."),
+        END_RENAME("Successfully renamed unzipped java version!\n");
 
         final String details;
 

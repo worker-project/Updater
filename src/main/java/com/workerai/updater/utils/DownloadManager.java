@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.workerai.updater.WorkerUpdater;
 import fr.flowarg.flowio.FileUtils;
+import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.download.json.ExternalFile;
 import fr.flowarg.flowzipper.ZipUtils;
 
@@ -63,6 +64,7 @@ public class DownloadManager {
     }
 
     String sendRequest() {
+        // get correct java version
         try {
             URL url = new URL(String.format("https://api.foojay.io/disco/v3.0/packages/jdks?version=17.0.1&distro=zulu&architecture=%s&archive_type=zip&operating_system=%s&javafx_bundled=true", this.arch, this.os));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -80,13 +82,14 @@ public class DownloadManager {
 
             return response.toString();
         } catch (IOException e) {
-            System.out.println("Java version not found for current OS: " + os + " and current architecture: " + arch);
+            WorkerUpdater.getInstance().getLogger().err("Java version not found for current OS: " + os + " and current architecture: " + arch);
             System.exit(0);
             return null;
         }
     }
 
     String getInfosFile(String link) {
+        // get java versions infos sha256, etc...
         try {
             URL url = new URL(link);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -103,7 +106,7 @@ public class DownloadManager {
 
             return response.toString();
         } catch (IOException e) {
-            WorkerUpdater.getLogger().debug("Java version not found for current OS: " + os + " and current architecture: " + arch);
+            WorkerUpdater.getInstance().getLogger().err("Java version not found for current OS: " + os + " and current architecture: " + arch);
             System.exit(0);
             return null;
         }
@@ -116,17 +119,21 @@ public class DownloadManager {
                 p = Paths.get(file.getPath());
             }
         }
-
         FileManager fileManager = workerUpdater.getFileManager();
         if (p != null) {
             if (!fileManager.javaFolder.exists() || (fileManager.javaFolder.exists() && !fileManager.readSizeFile().equals(Long.toString(fileManager.getJavaFolderSize())))) {
                 FileUtils.deleteDirectory(fileManager.javaFolder.toPath());
-                ZipUtils.unzip(workerUpdater.getUpdaterDirectory(), p);
-                File newFolder = Paths.get(p.toString().substring(0, p.toString().length() - 4)).toFile();
 
+                WorkerUpdater.getInstance().getDownloadCallback().step(Step.START_UNZIP);
+                ZipUtils.unzip(workerUpdater.getUpdaterDirectory(), p);
+                WorkerUpdater.getInstance().getDownloadCallback().step(Step.END_UNZIP);
+
+                WorkerUpdater.getInstance().getDownloadCallback().step(Step.START_RENAME);
+                File newFolder = Paths.get(p.toString().substring(0, p.toString().length() - 4)).toFile();
                 if (newFolder.exists() && !fileManager.javaFolder.exists()) {
                     Files.move(newFolder.toPath(), fileManager.javaFolder.toPath());
                 }
+                WorkerUpdater.getInstance().getDownloadCallback().step(Step.END_RENAME);
 
                 fileManager.writeSizeFile(Long.toString(fileManager.getJavaFolderSize()));
             }

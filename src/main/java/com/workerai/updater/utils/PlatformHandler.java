@@ -1,12 +1,11 @@
 package com.workerai.updater.utils;
 
-import com.workerai.updater.WorkerUpdater;
 import fr.flowarg.flowcompat.Platform;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class PlatformManager {
+public class PlatformHandler {
     public static Path createFolder(String... folderName) {
         Path path;
         switch (Platform.getCurrentPlatform()) {
@@ -43,7 +42,6 @@ public class PlatformManager {
             OS = "solaris";
         }
 
-        WorkerUpdater.getLogger().debug("Detected OS: " + OS);
         return OS;
     }
 }
