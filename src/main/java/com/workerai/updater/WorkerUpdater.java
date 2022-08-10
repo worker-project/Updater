@@ -7,10 +7,11 @@ import com.workerai.updater.utils.PlatformHandler;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowlogger.Logger;
 import fr.flowarg.flowupdater.FlowUpdater;
-import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.utils.ExternalFileDeleter;
 import fr.flowarg.flowupdater.utils.UpdaterOptions;
 
+import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -21,8 +22,11 @@ public class WorkerUpdater {
     private static WorkerUpdater INSTANCE;
     private final ILogger LOGGER;
     private final Path updaterDirectory = PlatformHandler.createFolder(".WorkerAI", "bin");
+    private final Path downloadDirectory = PlatformHandler.createFolder(".WorkerAI", "bin", "download");
     private final FileManager fileManager = new FileManager(updaterDirectory);
     private final DownloadCallback downloadCallback = new DownloadCallback();
+
+    public static String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
 
     private static final Window window = new Window();
 
@@ -35,12 +39,10 @@ public class WorkerUpdater {
             }
         }
 
-        new Thread(this::startUpdateProcess).start();
+       startUpdateProcess();
     }
 
     public void startUpdateProcess() {
-        window.drawUpdatePage();
-
         fileManager.createSizeFile();
 
         DownloadManager downloadManager = new DownloadManager(this, getSystemName(), System.getProperty("os.arch"));
@@ -71,8 +73,18 @@ public class WorkerUpdater {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
 
-        window.drawEndPage();
+    public void startWorkerLauncher() {
+        File launcherJar = new File(downloadDirectory.toFile(), "WorkerLauncher.jar");
+        if(!launcherJar.exists()) {
+            int result = JOptionPane.showConfirmDialog(null, "Launcher file doesn't exist...\nWould you like to try to download it again?",null, JOptionPane.YES_NO_OPTION);
+            if(result == JOptionPane.YES_OPTION) {
+                window.drawStartPage();
+            } else {
+                System.exit(0);
+            }
+        }
     }
 
     public static void main(String[] args) {

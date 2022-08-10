@@ -20,6 +20,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.workerai.updater.WorkerUpdater.DOWNLOAD_URL;
+
 public class DownloadManager {
     private final String os;
     private final String arch;
@@ -33,8 +35,8 @@ public class DownloadManager {
         this.workerUpdater = updater;
     }
 
-    public void addFiles(ExternalFile... fileData) {
-        this.externalFiles.addAll(Arrays.asList(fileData));
+    public void addFiles(ExternalFile fileData) {
+        this.externalFiles.add(fileData);
     }
 
     public void removeFiles(ExternalFile... fileData) {
@@ -43,6 +45,9 @@ public class DownloadManager {
 
     public void genDownloadFiles() {
         addFiles(getJavaFile());
+        for (ExternalFile extFile : ExternalFile.getExternalFilesFromJson(DOWNLOAD_URL)) {
+            addFiles(extFile);
+        }
     }
 
 
@@ -60,7 +65,7 @@ public class DownloadManager {
         JsonObject jsoninfo = JsonParser.parseString(infos).getAsJsonObject().get("result").getAsJsonArray().get(0).getAsJsonObject();
         String sha256 = jsoninfo.get("checksum").getAsString();
 
-        return new ExternalFile(new File(workerUpdater.getUpdaterDirectory().toFile(), name).getPath(), url, sha256, size);
+        return new ExternalFile(new File(workerUpdater.getUpdaterDirectory().toFile(), name).getPath(), url, sha256, size, true);
     }
 
     String sendRequest() {

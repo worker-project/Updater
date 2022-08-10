@@ -1,5 +1,6 @@
 package com.workerai.updater;
 
+import com.workerai.updater.ui.Window;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
@@ -8,6 +9,9 @@ import fr.flowarg.flowupdater.download.Step;
 import java.nio.file.Path;
 
 public class DownloadCallback implements IProgressCallback {
+
+    private boolean isUpdate = false;
+
     @Override
     public void init(ILogger logger) {
     }
@@ -16,9 +20,25 @@ public class DownloadCallback implements IProgressCallback {
     public void step(Step step) {
         //stepLabel.setText(StepInfo.valueOf(step.name()).getDetails());
         WorkerUpdater.getInstance().getLogger().debug(StepInfo.valueOf(step.name()).getDetails());
-        int currentValue = WorkerUpdater.getInstance().getWindow().getProgressBar().getValue();
-        int valueToDisplay = currentValue == 0 ? 10 : currentValue + 10;
-        WorkerUpdater.getInstance().getWindow().getProgressBar().setValue(valueToDisplay);
+
+        if(step.equals(Step.START_DOWNLOAD)) {
+            isUpdate = true;
+            WorkerUpdater.getInstance().getWindow().drawUpdatePage();
+        } else if (step.equals(Step.END_CHECK) && !isUpdate) {
+            //pas de doawnload
+            //launcher start
+            WorkerUpdater.getInstance().startWorkerLauncher();
+        } else if (step.equals(Step.END_CHECK)) {
+            isUpdate = false;
+            WorkerUpdater.getInstance().getWindow().drawEndPage();
+            //fin du doawnload
+        }
+
+        if(isUpdate) {
+            int currentValue = WorkerUpdater.getInstance().getWindow().getProgressBar().getValue();
+            int valueToDisplay = currentValue == 0 ? 10 : currentValue + 10;
+            WorkerUpdater.getInstance().getWindow().getProgressBar().setValue(valueToDisplay);
+        }
     }
 
     @Override

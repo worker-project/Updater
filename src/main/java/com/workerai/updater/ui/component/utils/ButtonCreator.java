@@ -37,13 +37,9 @@ public class ButtonCreator {
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         button.addEventListener(e -> {
-            if (e.getSource().equals(button) && type.equals(BUTTON_TYPE.CLOSE_TEXTURED) || type.equals(BUTTON_TYPE.CLOSE_COLORED)) {
-                WorkerUpdater.getInstance().getLogger().info("Closing Updater...");
+            if (type.equals(BUTTON_TYPE.CLOSE_TEXTURED) || type.equals(BUTTON_TYPE.CLOSE_COLORED)) {
                 System.exit(0);
-            } /*else {
-                WorkerUpdater.getInstance().getWindow().drawUpdatePage();
-                new Thread(() -> WorkerUpdater.getInstance().startUpdateProcess()).start();
-            }*/
+            }
         });
 
         return button;

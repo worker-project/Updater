@@ -87,14 +87,13 @@ public class Window {
 
         FadeAnimation.fadeInFrame(this.startFrame, FadeAnimation.FAST);
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-                new WorkerUpdater();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        new WorkerUpdater();
     }
 
     public void drawUpdatePage() {
@@ -121,6 +120,11 @@ public class Window {
 
         FadeAnimation.fadeOutFrame(this.updateFrame, FadeAnimation.FAST);
         FadeAnimation.fadeInFrame(this.endFrame, FadeAnimation.FAST);
+    }
+
+    void drawText(String text, JFrame frame) {
+        JLabel label = new JLabel(text);
+        frame.getContentPane().add(label);
     }
 
     void drawProgressBar(int value, JFrame frame) {

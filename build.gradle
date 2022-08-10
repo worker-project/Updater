@@ -19,6 +19,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'fr.flowarg:flowmultitools:1.4.0'
+    implementation 'fr.flowarg:openlauncherlib:3.2.5'
 }
 
 compileJava {
