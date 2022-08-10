@@ -18,15 +18,13 @@ import java.util.Collections;
 
 import static com.workerai.updater.utils.PlatformHandler.getSystemName;
 
-public class WorkerUpdater {
+public class WorkerUpdater extends JPanel {
     private static WorkerUpdater INSTANCE;
     private final ILogger LOGGER;
     private final Path updaterDirectory = PlatformHandler.createFolder(".WorkerAI", "bin");
     private final Path downloadDirectory = PlatformHandler.createFolder(".WorkerAI", "bin", "download");
     private final FileManager fileManager = new FileManager(updaterDirectory);
     private final DownloadCallback downloadCallback = new DownloadCallback();
-
-    public static String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
 
     private static final Window window = new Window();
 
@@ -39,7 +37,7 @@ public class WorkerUpdater {
             }
         }
 
-       startUpdateProcess();
+        startUpdateProcess();
     }
 
     public void startUpdateProcess() {
@@ -77,9 +75,9 @@ public class WorkerUpdater {
 
     public void startWorkerLauncher() {
         File launcherJar = new File(downloadDirectory.toFile(), "WorkerLauncher.jar");
-        if(!launcherJar.exists()) {
-            int result = JOptionPane.showConfirmDialog(null, "Launcher file doesn't exist...\nWould you like to try to download it again?",null, JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
+        if (!launcherJar.exists()) {
+            int result = JOptionPane.showConfirmDialog(null, "Launcher file doesn't exist...\nWould you like to try to download it again?", null, JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
                 window.drawStartPage();
             } else {
                 System.exit(0);

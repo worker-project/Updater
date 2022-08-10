@@ -20,13 +20,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.workerai.updater.WorkerUpdater.DOWNLOAD_URL;
-
 public class DownloadManager {
     private final String os;
     private final String arch;
     private final ArrayList<ExternalFile> externalFiles = new ArrayList<>();
     private final WorkerUpdater workerUpdater;
+
+    String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
 
     public DownloadManager(WorkerUpdater updater, String os, String arch) {
         this.os = os;

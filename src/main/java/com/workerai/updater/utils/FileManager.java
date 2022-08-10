@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class FileManager {
     public final File javaFolder;
-    public final File sizeFile;
+    final File sizeFile;
 
     public FileManager(Path updaterDirectory) {
         this.javaFolder = new File(updaterDirectory.toFile(), "java");

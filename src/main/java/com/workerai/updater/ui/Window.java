@@ -1,11 +1,10 @@
 package com.workerai.updater.ui;
 
 import com.workerai.updater.WorkerUpdater;
+import com.workerai.updater.ui.component.bar.ProgressBar;
 import com.workerai.updater.ui.component.button.textured.TexturedButton;
 import com.workerai.updater.ui.component.fade.FadeAnimation;
 import com.workerai.updater.ui.component.utils.ButtonCreator;
-import com.workerai.updater.ui.component.bar.ProgressBar;
-import com.workerai.updater.ui.component.button.colored.ColoredButton;
 import com.workerai.updater.utils.ResourceManager;
 import fr.flowarg.flowcompat.Platform;
 
@@ -17,7 +16,7 @@ import static com.workerai.updater.ui.component.utils.ButtonCreator.createHoverB
 import static com.workerai.updater.ui.component.utils.ProgressCreator.createProgressBar;
 import static com.workerai.updater.utils.ColorManager.COFFEE;
 
-public class Window {
+public class Window extends JPanel {
     private final JFrame startFrame;
     private final JFrame updateFrame;
     private final JFrame endFrame;
@@ -77,6 +76,11 @@ public class Window {
         frameOFF.setVisible(false);
     }
 
+    void drawProgressBar(int value, JFrame frame) {
+        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, value);
+        frame.getContentPane().add(progressBar, null);
+    }
+
     public void drawStartPage() {
         this.createFrame(this.startFrame);
 
@@ -122,17 +126,9 @@ public class Window {
         FadeAnimation.fadeInFrame(this.endFrame, FadeAnimation.FAST);
     }
 
-    void drawText(String text, JFrame frame) {
-        JLabel label = new JLabel(text);
-        frame.getContentPane().add(label);
-    }
-
-    void drawProgressBar(int value, JFrame frame) {
-        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, value);
-        frame.getContentPane().add(progressBar, null);
-    }
-
     public ProgressBar getProgressBar() {
         return progressBar;
     }
 }
+
+
