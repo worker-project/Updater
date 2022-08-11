@@ -1,10 +1,11 @@
 package com.workerai.updater.ui;
 
 import com.workerai.updater.WorkerUpdater;
-import com.workerai.updater.ui.component.bar.ProgressBar;
+import com.workerai.updater.ui.component.button.colored.ColoredButton;
 import com.workerai.updater.ui.component.button.textured.TexturedButton;
 import com.workerai.updater.ui.component.fade.FadeAnimation;
 import com.workerai.updater.ui.component.utils.ButtonCreator;
+import com.workerai.updater.ui.component.bar.ProgressBar;
 import com.workerai.updater.utils.ResourceManager;
 import fr.flowarg.flowcompat.Platform;
 
@@ -16,7 +17,7 @@ import static com.workerai.updater.ui.component.utils.ButtonCreator.createHoverB
 import static com.workerai.updater.ui.component.utils.ProgressCreator.createProgressBar;
 import static com.workerai.updater.utils.ColorManager.COFFEE;
 
-public class Window extends JPanel {
+public class Window {
     private final JFrame startFrame;
     private final JFrame updateFrame;
     private final JFrame endFrame;
@@ -71,14 +72,14 @@ public class Window extends JPanel {
         frame.getContentPane().add(closeButton, null);
     }
 
+    void drawPlayButton(JFrame frame) {
+        ColoredButton playButton = (ColoredButton) createHoverButton("Launch", 300 - 60, 285, 120, 45, ButtonCreator.BUTTON_TYPE.LAUNCH_COLORED);
+        frame.getContentPane().add(playButton, null);
+    }
+
     void drawFrame(JFrame frameON, JFrame frameOFF) {
         frameON.setVisible(true);
         frameOFF.setVisible(false);
-    }
-
-    void drawProgressBar(int value, JFrame frame) {
-        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, value);
-        frame.getContentPane().add(progressBar, null);
     }
 
     public void drawStartPage() {
@@ -119,16 +120,25 @@ public class Window extends JPanel {
         this.endFrame.setLayout(null);
         this.drawButton(this.endFrame);
         this.drawLogo(this.endFrame);
-        this.drawProgressBar(70, this.endFrame);
+        this.drawPlayButton(this.endFrame);
+        //this.drawProgressBar(70, this.endFrame);
         this.drawFrame(this.endFrame, this.updateFrame);
 
         FadeAnimation.fadeOutFrame(this.updateFrame, FadeAnimation.FAST);
         FadeAnimation.fadeInFrame(this.endFrame, FadeAnimation.FAST);
     }
 
+    void drawText(String text, JFrame frame) {
+        JLabel label = new JLabel(text);
+        frame.getContentPane().add(label);
+    }
+
+    void drawProgressBar(int value, JFrame frame) {
+        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, value);
+        frame.getContentPane().add(progressBar, null);
+    }
+
     public ProgressBar getProgressBar() {
         return progressBar;
     }
 }
-
-

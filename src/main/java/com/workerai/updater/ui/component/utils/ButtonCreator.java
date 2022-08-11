@@ -24,8 +24,8 @@ public class ButtonCreator {
     public static AbstractButton createHoverButton(String name, int posX, int posY, int width, int height, BUTTON_TYPE type) {
         AbstractButton button;
 
-        if(type.equals(BUTTON_TYPE.CLOSE_COLORED)) {
-            button = new ColoredButton(DARK_YELLOW, LIGHT_YELLOW);
+        if(type.equals(BUTTON_TYPE.CLOSE_COLORED) || type.equals(BUTTON_TYPE.LAUNCH_COLORED)) {
+            button = new ColoredButton(LIGHT_YELLOW, DARK_YELLOW);
         } else {
             button = new TexturedButton(getResource(ResourceManager.getCloseDarkIcon()), getResource(ResourceManager.getCloseLightIcon()));
         }
@@ -39,6 +39,8 @@ public class ButtonCreator {
         button.addEventListener(e -> {
             if (type.equals(BUTTON_TYPE.CLOSE_TEXTURED) || type.equals(BUTTON_TYPE.CLOSE_COLORED)) {
                 System.exit(0);
+            } else if (type.equals(BUTTON_TYPE.LAUNCH_TEXTURED) || type.equals(BUTTON_TYPE.LAUNCH_COLORED)) {
+                WorkerUpdater.getInstance().startWorkerLauncher();
             }
         });
 

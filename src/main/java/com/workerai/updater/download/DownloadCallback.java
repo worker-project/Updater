@@ -1,6 +1,6 @@
-package com.workerai.updater;
+package com.workerai.updater.download;
 
-import com.workerai.updater.ui.Window;
+import com.workerai.updater.WorkerUpdater;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;

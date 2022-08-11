@@ -1,8 +1,9 @@
-package com.workerai.updater.utils;
+package com.workerai.updater.download;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.workerai.updater.WorkerUpdater;
+import com.workerai.updater.utils.FileManager;
 import fr.flowarg.flowio.FileUtils;
 import fr.flowarg.flowupdater.download.Step;
 import fr.flowarg.flowupdater.download.json.ExternalFile;
@@ -20,13 +21,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.workerai.updater.WorkerUpdater.DOWNLOAD_URL;
+
 public class DownloadManager {
     private final String os;
     private final String arch;
     private final ArrayList<ExternalFile> externalFiles = new ArrayList<>();
     private final WorkerUpdater workerUpdater;
-
-    String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
 
     public DownloadManager(WorkerUpdater updater, String os, String arch) {
         this.os = os;
@@ -71,7 +72,7 @@ public class DownloadManager {
     String sendRequest() {
         // get correct java version
         try {
-            URL url = new URL(String.format("https://api.foojay.io/disco/v3.0/packages/jdks?version=17.0.1&distro=zulu&architecture=%s&archive_type=zip&operating_system=%s&javafx_bundled=true", this.arch, this.os));
+            URL url = new URL(String.format("https://api.foojay.io/disco/v3.0/packages/jdks?version=17.0.1&distro=zulu&architecture=%s&archive_type=zip&operating_system=%s&javafx_bundled=false", this.arch, this.os));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -117,7 +118,27 @@ public class DownloadManager {
         }
     }
 
+    void checkFiles() {
+        ArrayList<Path> paths = new ArrayList<>();
+        paths.add(WorkerUpdater.getInstance().getFileManager().javaSizeFile.toPath());
+        paths.add(WorkerUpdater.getInstance().getFileManager().zipSizeFile.toPath());
+        paths.add(WorkerUpdater.getInstance().getUpdaterDirectory().resolve("logs.log"));
+
+        for (ExternalFile extFile : externalFiles) {
+            paths.add(Paths.get(extFile.getPath()));
+        }
+
+        for(File files : workerUpdater.getUpdaterDirectory().toFile().listFiles()) {
+            if(!paths.contains(Paths.get(files.getPath()))) {
+                files.delete();
+            }
+        }
+
+    }
+
     public void unzipFiles() throws IOException {
+        checkFiles();
+
         Path p = null;
         for (ExternalFile file : externalFiles) {
             if (file.getPath().contains(".zip")) {
@@ -126,7 +147,10 @@ public class DownloadManager {
         }
         FileManager fileManager = workerUpdater.getFileManager();
         if (p != null) {
-            if (!fileManager.javaFolder.exists() || (fileManager.javaFolder.exists() && !fileManager.readSizeFile().equals(Long.toString(fileManager.getJavaFolderSize())))) {
+            if (!fileManager.javaFolder.exists() ||
+                    (fileManager.javaFolder.exists() && !fileManager.readSizeFile(fileManager.javaSizeFile).equals(Long.toString(fileManager.getJavaFolderSize())))
+            || (p.toFile().exists() && !fileManager.readSizeFile(fileManager.zipSizeFile).equals(Long.toString(fileManager.getFolderSize(p.toFile()))))) {
+
                 FileUtils.deleteDirectory(fileManager.javaFolder.toPath());
 
                 WorkerUpdater.getInstance().getDownloadCallback().step(Step.START_UNZIP);
@@ -140,7 +164,8 @@ public class DownloadManager {
                 }
                 WorkerUpdater.getInstance().getDownloadCallback().step(Step.END_RENAME);
 
-                fileManager.writeSizeFile(Long.toString(fileManager.getJavaFolderSize()));
+                fileManager.writeSizeFile(fileManager.javaSizeFile, Long.toString(fileManager.getJavaFolderSize()));
+                fileManager.writeSizeFile(fileManager.zipSizeFile, Long.toString(fileManager.getFolderSize(p.toFile())));
             }
         }
     }
