@@ -9,11 +9,11 @@ import static com.workerai.updater.utils.ColorManager.DARK_YELLOW;
 import static com.workerai.updater.utils.ColorManager.LIGHT_YELLOW;
 
 public class ProgressCreator {
-    public static ProgressBar createProgressBar(String name, int posX, int posY, int width, int height, int value) {
+    public static ProgressBar createProgressBar(String name, int posX, int posY, int width, int height, int value, int maxValue) {
         ProgressBar progressBar = new ProgressBar(DARK_YELLOW, LIGHT_YELLOW);
         progressBar.setName(name);
         progressBar.setBounds(posX, posY, width, height);
-        progressBar.setMaximum(70);
+        progressBar.setMaximum(maxValue);
         progressBar.setValue(value);
         progressBar.setBorder(new RoundBar(15));
 

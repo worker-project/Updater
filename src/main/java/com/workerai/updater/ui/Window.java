@@ -15,6 +15,7 @@ import java.util.Objects;
 import static com.workerai.updater.ui.component.utils.ButtonCreator.createHoverButton;
 import static com.workerai.updater.ui.component.utils.ProgressCreator.createProgressBar;
 import static com.workerai.updater.utils.ColorManager.COFFEE;
+import static com.workerai.updater.utils.ColorManager.DARK_YELLOW;
 import static com.workerai.updater.utils.ThrowWait.throwWait;
 
 public class Window {
@@ -79,25 +80,30 @@ public class Window {
     }
 
     void drawProgressBar(JPanel panel) {
-        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, 0);
-        panel.add(progressBar, null);
+        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 290, 400, 30, 0, 80);
+        panel.add(progressBar, 2,0);
     }
 
     void drawProgressText(JPanel panel) {
-        progressLabel.setBounds(600 / 2 - 200 / 2, 250, 200, 80);
-        progressLabel.setForeground(Color.RED);
-        panel.add(progressLabel, BorderLayout.NORTH);
+        progressTextFormatter();
+        progressLabel.setForeground(DARK_YELLOW);
+        panel.add(progressLabel, 2, 0);
+    }
+
+    public void progressTextFormatter() {
+        FontMetrics fm = progressLabel.getFontMetrics(progressLabel.getFont());
+        int width = fm.stringWidth(progressLabel.getText());
+        progressLabel.setBounds(600 / 2 - width / 2 - 5, 295, 280, 80);
     }
 
     public void drawStartPage() {
-        JPanel panel = new JPanel();
-        this.createFrame(this.startFrame, panel);
+        JPanel startPanel = new JPanel();
+        this.createFrame(this.startFrame, startPanel);
 
-        this.drawLogo(panel);
-        this.drawCloseButton(panel);
-        this.drawProgressText(panel);
+        this.drawLogo(startPanel);
+        this.drawCloseButton(startPanel);
 
-        this.startFrame.setContentPane(panel);
+        this.startFrame.setContentPane(startPanel);
         this.drawFrame(this.startFrame, this.updateFrame);
 
         FadeAnimation.fadeInFrame(this.startFrame, FadeAnimation.FAST);
@@ -107,15 +113,15 @@ public class Window {
     }
 
     public void drawUpdatePage() {
-        JPanel panel = new JPanel();
-        this.createFrame(this.updateFrame, panel);
+        JPanel updatePanel = new JPanel();
+        this.createFrame(this.updateFrame, updatePanel);
 
-        this.drawBackground(panel);
-        this.drawProgressBar(panel);
-        this.drawCloseButton(panel);
-        this.drawProgressText(panel);
+        this.drawBackground(updatePanel);
+        this.drawProgressBar(updatePanel);
+        this.drawCloseButton(updatePanel);
+        this.drawProgressText(updatePanel);
 
-        this.updateFrame.setContentPane(panel);
+        this.updateFrame.setContentPane(updatePanel);
         this.drawFrame(this.updateFrame, this.startFrame);
 
         FadeAnimation.fadeOutFrame(this.startFrame, FadeAnimation.FAST);

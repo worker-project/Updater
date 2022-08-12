@@ -1,8 +1,8 @@
 package com.workerai.updater;
 
 import com.workerai.updater.download.DownloadCallback;
-import com.workerai.updater.ui.Window;
 import com.workerai.updater.download.DownloadManager;
+import com.workerai.updater.ui.Window;
 import com.workerai.updater.utils.FileManager;
 import com.workerai.updater.utils.PlatformHandler;
 import fr.flowarg.flowlogger.ILogger;
@@ -45,7 +45,7 @@ public class WorkerUpdater {
             }
         }
 
-       startUpdateProcess();
+        startUpdateProcess();
     }
 
     public void startUpdateProcess() {
@@ -84,9 +84,9 @@ public class WorkerUpdater {
 
     public void startWorkerLauncher() {
         File launcherJar = new File(downloadDirectory.toFile(), "WorkerLauncher.jar");
-        if(!launcherJar.exists()) {
-            int result = JOptionPane.showConfirmDialog(null, "Launcher file doesn't exist...\nWould you like to try to download it again?",null, JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
+        if (!launcherJar.exists()) {
+            int result = JOptionPane.showConfirmDialog(null, "Launcher file doesn't exist...\nWould you like to try to download it again?", null, JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
                 window.drawStartPage();
             } else {
                 System.exit(0);
@@ -109,7 +109,6 @@ public class WorkerUpdater {
         }
 
         System.exit(0);
-
     }
 
     public static void main(String[] args) {
