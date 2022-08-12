@@ -8,7 +8,6 @@ import com.workerai.updater.utils.ResourceManager;
 
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static com.workerai.updater.ui.component.DrawComponent.getResource;
 import static com.workerai.updater.utils.ColorManager.*;
@@ -24,10 +23,14 @@ public class ButtonCreator {
     public static AbstractButton createHoverButton(String name, int posX, int posY, int width, int height, BUTTON_TYPE type) {
         AbstractButton button;
 
-        if(type.equals(BUTTON_TYPE.CLOSE_COLORED) || type.equals(BUTTON_TYPE.LAUNCH_COLORED)) {
+        if (type.equals(BUTTON_TYPE.CLOSE_COLORED) || type.equals(BUTTON_TYPE.LAUNCH_COLORED)) {
             button = new ColoredButton(LIGHT_YELLOW, DARK_YELLOW);
         } else {
-            button = new TexturedButton(getResource(ResourceManager.getCloseDarkIcon()), getResource(ResourceManager.getCloseLightIcon()));
+            if (type.equals(BUTTON_TYPE.LAUNCH_TEXTURED)) {
+                button = new TexturedButton(getResource(ResourceManager.getPlayDarkIcon()), getResource(ResourceManager.getCloseLightIcon()));
+            } else {
+                button = new TexturedButton(getResource(ResourceManager.getCloseDarkIcon()), getResource(ResourceManager.getCloseLightIcon()));
+            }
         }
 
         button.setText(name);

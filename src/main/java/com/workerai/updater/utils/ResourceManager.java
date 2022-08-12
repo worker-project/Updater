@@ -24,4 +24,9 @@ public class ResourceManager {
     public static String getCloseDarkIcon() {
         return CLOSE_DARKICON_PATH;
     }
+
+    static final String PLAY_DARKICON_PATH = "/play_dark.png";
+    public static String getPlayDarkIcon() {
+        return PLAY_DARKICON_PATH;
+    }
 }

@@ -1,11 +1,10 @@
 package com.workerai.updater.ui;
 
 import com.workerai.updater.WorkerUpdater;
-import com.workerai.updater.ui.component.button.colored.ColoredButton;
+import com.workerai.updater.ui.component.bar.ProgressBar;
 import com.workerai.updater.ui.component.button.textured.TexturedButton;
 import com.workerai.updater.ui.component.fade.FadeAnimation;
 import com.workerai.updater.ui.component.utils.ButtonCreator;
-import com.workerai.updater.ui.component.bar.ProgressBar;
 import com.workerai.updater.utils.ResourceManager;
 import fr.flowarg.flowcompat.Platform;
 
@@ -16,22 +15,21 @@ import java.util.Objects;
 import static com.workerai.updater.ui.component.utils.ButtonCreator.createHoverButton;
 import static com.workerai.updater.ui.component.utils.ProgressCreator.createProgressBar;
 import static com.workerai.updater.utils.ColorManager.COFFEE;
+import static com.workerai.updater.utils.ThrowWait.throwWait;
 
 public class Window {
     private final JFrame startFrame;
     private final JFrame updateFrame;
-    private final JFrame endFrame;
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private ProgressBar progressBar;
+    private final JLabel progressLabel = new JLabel("");
 
     public Window() {
         startFrame = new JFrame();
         updateFrame = new JFrame();
-        endFrame = new JFrame();
 
         setFrameSettings(this.startFrame);
         setFrameSettings(this.updateFrame);
-        setFrameSettings(this.endFrame);
     }
 
     void setFrameSettings(JFrame frame) {
@@ -42,39 +40,37 @@ public class Window {
         frame.setUndecorated(!Platform.isOnLinux());
     }
 
-    void createFrame(JFrame frame) {
+    void createFrame(JFrame frame, JPanel panel) {
         frame.setSize(600, 350);
         frame.setLocation(screenSize.width / 2 - 600 / 2, screenSize.height / 2 - 350 / 2);
 
-        ImageIcon backgroundImage = new ImageIcon(Objects.requireNonNull(this.getClass().getResource(ResourceManager.getFavIcon())));
-        frame.setIconImage(backgroundImage.getImage());
-        frame.getContentPane().setBackground(COFFEE);
+        ImageIcon iconImage = new ImageIcon(Objects.requireNonNull(this.getClass().getResource(ResourceManager.getFavIcon())));
+        frame.setIconImage(iconImage.getImage());
+
+        panel.setLayout(null);
+        panel.setSize(600, 350);
+        panel.setBackground(COFFEE);
     }
 
-    void drawBackground(JFrame frame) {
+    void drawBackground(JPanel panel) {
         ImageIcon backgroundImage = new ImageIcon(Objects.requireNonNull(this.getClass().getResource(ResourceManager.getBackground())));
         JLabel backgroundLabel = new JLabel(backgroundImage);
 
         backgroundLabel.setBounds(0, 0, backgroundImage.getIconWidth(), backgroundImage.getIconHeight());
-        frame.getContentPane().add(backgroundLabel, BorderLayout.CENTER);
+        panel.add(backgroundLabel, BorderLayout.CENTER);
     }
 
-    void drawLogo(JFrame frame) {
+    void drawLogo(JPanel panel) {
         ImageIcon logoImage = new ImageIcon(Objects.requireNonNull(this.getClass().getResource(ResourceManager.getLogo())));
         JLabel logoLabel = new JLabel(logoImage);
 
         logoLabel.setBounds(0, 0, logoImage.getIconWidth(), logoImage.getIconHeight());
-        frame.getContentPane().add(logoLabel, BorderLayout.CENTER);
+        panel.add(logoLabel, BorderLayout.CENTER);
     }
 
-    void drawButton(JFrame frame) {
+    void drawCloseButton(JPanel panel) {
         TexturedButton closeButton = (TexturedButton) createHoverButton("", 600 - 30 - 15, 15, 30, 30, ButtonCreator.BUTTON_TYPE.CLOSE_TEXTURED);
-        frame.getContentPane().add(closeButton, null);
-    }
-
-    void drawPlayButton(JFrame frame) {
-        ColoredButton playButton = (ColoredButton) createHoverButton("Launch", 300 - 60, 285, 120, 45, ButtonCreator.BUTTON_TYPE.LAUNCH_COLORED);
-        frame.getContentPane().add(playButton, null);
+        panel.add(closeButton, null);
     }
 
     void drawFrame(JFrame frameON, JFrame frameOFF) {
@@ -82,63 +78,55 @@ public class Window {
         frameOFF.setVisible(false);
     }
 
-    public void drawStartPage() {
-        this.createFrame(this.startFrame);
+    void drawProgressBar(JPanel panel) {
+        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, 0);
+        panel.add(progressBar, null);
+    }
 
-        this.startFrame.setLayout(null);
-        this.drawButton(this.startFrame);
-        this.drawLogo(this.startFrame);
+    void drawProgressText(JPanel panel) {
+        progressLabel.setBounds(600 / 2 - 200 / 2, 250, 200, 80);
+        progressLabel.setForeground(Color.RED);
+        panel.add(progressLabel, BorderLayout.NORTH);
+    }
+
+    public void drawStartPage() {
+        JPanel panel = new JPanel();
+        this.createFrame(this.startFrame, panel);
+
+        this.drawLogo(panel);
+        this.drawCloseButton(panel);
+        this.drawProgressText(panel);
+
+        this.startFrame.setContentPane(panel);
         this.drawFrame(this.startFrame, this.updateFrame);
 
         FadeAnimation.fadeInFrame(this.startFrame, FadeAnimation.FAST);
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+        throwWait(3000);
         new WorkerUpdater();
     }
 
     public void drawUpdatePage() {
-        this.createFrame(this.updateFrame);
+        JPanel panel = new JPanel();
+        this.createFrame(this.updateFrame, panel);
 
-        this.updateFrame.setLayout(null);
-        this.drawBackground(this.updateFrame);
-        this.drawProgressBar(0, this.updateFrame);
-        this.drawButton(this.updateFrame);
+        this.drawBackground(panel);
+        this.drawProgressBar(panel);
+        this.drawCloseButton(panel);
+        this.drawProgressText(panel);
+
+        this.updateFrame.setContentPane(panel);
         this.drawFrame(this.updateFrame, this.startFrame);
 
         FadeAnimation.fadeOutFrame(this.startFrame, FadeAnimation.FAST);
         FadeAnimation.fadeInFrame(this.updateFrame, FadeAnimation.FAST);
     }
 
-    public void drawEndPage() {
-        this.createFrame(this.endFrame);
-
-        this.endFrame.setLayout(null);
-        this.drawButton(this.endFrame);
-        this.drawLogo(this.endFrame);
-        this.drawPlayButton(this.endFrame);
-        //this.drawProgressBar(70, this.endFrame);
-        this.drawFrame(this.endFrame, this.updateFrame);
-
-        FadeAnimation.fadeOutFrame(this.updateFrame, FadeAnimation.FAST);
-        FadeAnimation.fadeInFrame(this.endFrame, FadeAnimation.FAST);
-    }
-
-    void drawText(String text, JFrame frame) {
-        JLabel label = new JLabel(text);
-        frame.getContentPane().add(label);
-    }
-
-    void drawProgressBar(int value, JFrame frame) {
-        progressBar = createProgressBar("Download", 600 / 2 - 400 / 2, 305, 400, 30, value);
-        frame.getContentPane().add(progressBar, null);
-    }
-
     public ProgressBar getProgressBar() {
         return progressBar;
+    }
+
+    public JLabel getProgressLabel() {
+        return progressLabel;
     }
 }

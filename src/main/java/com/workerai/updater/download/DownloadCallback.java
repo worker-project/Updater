@@ -1,12 +1,15 @@
 package com.workerai.updater.download;
 
 import com.workerai.updater.WorkerUpdater;
+import com.workerai.updater.ui.component.bar.ProgressBar;
 import fr.flowarg.flowlogger.ILogger;
 import fr.flowarg.flowupdater.download.DownloadList;
 import fr.flowarg.flowupdater.download.IProgressCallback;
 import fr.flowarg.flowupdater.download.Step;
 
 import java.nio.file.Path;
+
+import static com.workerai.updater.utils.ThrowWait.throwWait;
 
 public class DownloadCallback implements IProgressCallback {
 
@@ -18,27 +21,25 @@ public class DownloadCallback implements IProgressCallback {
 
     @Override
     public void step(Step step) {
-        //stepLabel.setText(StepInfo.valueOf(step.name()).getDetails());
+        throwWait(2000);
         WorkerUpdater.getInstance().getLogger().debug(StepInfo.valueOf(step.name()).getDetails());
+        WorkerUpdater.getInstance().getWindow().getProgressLabel().setText(StepInfo.valueOf(step.name()).getDetails());
+
+        if(step.equals(Step.START_CHECK) && !isUpdate) {
+            WorkerUpdater.getInstance().getWindow().drawUpdatePage();
+        }
 
         if(step.equals(Step.START_DOWNLOAD)) {
             isUpdate = true;
             WorkerUpdater.getInstance().getWindow().drawUpdatePage();
-        } else if (step.equals(Step.END_CHECK) && !isUpdate) {
-            //pas de doawnload
-            //launcher start
-            WorkerUpdater.getInstance().startWorkerLauncher();
         } else if (step.equals(Step.END_CHECK)) {
             isUpdate = false;
-            WorkerUpdater.getInstance().getWindow().drawEndPage();
-            //fin du doawnload
+            displayProgressValue();
+            throwWait(2000);
+            WorkerUpdater.getInstance().startWorkerLauncher();
         }
 
-        if(isUpdate) {
-            int currentValue = WorkerUpdater.getInstance().getWindow().getProgressBar().getValue();
-            int valueToDisplay = currentValue == 0 ? 10 : currentValue + 10;
-            WorkerUpdater.getInstance().getWindow().getProgressBar().setValue(valueToDisplay);
-        }
+        displayProgressValue();
     }
 
     @Override
@@ -49,11 +50,6 @@ public class DownloadCallback implements IProgressCallback {
 
     @Override
     public void update(DownloadList.DownloadInfo info) {
-        try {
-            double progress = (info.getDownloadedBytes() / info.getTotalToDownloadBytes());
-        } catch (ArithmeticException arEx) {
-            return;
-        }
     }
 
     public enum StepInfo {
@@ -78,5 +74,12 @@ public class DownloadCallback implements IProgressCallback {
         public String getDetails() {
             return details;
         }
+    }
+
+    void displayProgressValue() {
+        ProgressBar progressBar = WorkerUpdater.getInstance().getWindow().getProgressBar();
+        int currentValue = progressBar.getValue();
+        int valueToDisplay = isUpdate ? currentValue == 0 ? 10 : currentValue + 10 : currentValue == 0 ? progressBar.getMaximum()/2 : currentValue + progressBar.getMaximum()/2;
+        WorkerUpdater.getInstance().getWindow().getProgressBar().setValue(valueToDisplay);
     }
 }
