@@ -14,7 +14,7 @@ public abstract class AbstractButton extends JComponent implements MouseListener
 
     private Color textColor;
 
-    private ArrayList<ButtonEventListener> eventListeners = new ArrayList<ButtonEventListener>();
+    private final ArrayList<ButtonEventListener> eventListeners = new ArrayList<ButtonEventListener>();
 
     private boolean hover = false;
 

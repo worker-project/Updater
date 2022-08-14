@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 public final class DrawComponent {
-    public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
-
     public static final int LITTLE_TRANSPARENT = 50;
 
     public static final Color LITTLE_TRANSPARENT_WHITE = getTransparentWhite(LITTLE_TRANSPARENT);
@@ -21,17 +19,6 @@ public final class DrawComponent {
     public static final Color HOVER_COLOR = LITTLE_TRANSPARENT_WHITE;
 
     public static final Color DISABLED_COLOR = getTransparentInstance(Color.GRAY, LITTLE_TRANSPARENT);
-
-    private static String resourcePath;
-
-    public static void setSystemLookNFeel() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException |
-                 IllegalAccessException e) {
-            System.out.println("[DrawComponent] WARNING: Can't set the system look n feel : " + e);
-        }
-    }
 
     public static Color getTransparentWhite(int transparency) {
         return getTransparentInstance(Color.WHITE, transparency);
@@ -64,19 +51,9 @@ public final class DrawComponent {
         }
     }
 
-    public static int percentage(int value, int maximum) {
-        return crossMult(value, maximum, 100);
-    }
 
     public static int crossMult(int value, int maximum, int coefficient) {
         return (int) ((double) value / (double) maximum * (double) coefficient);
-    }
-
-    public static Point getRecCenterPos(Rectangle parent, Rectangle rectangle) {
-        double x = parent.getWidth() / 2 - rectangle.getWidth() / 2;
-        double y = parent.getHeight() / 2 + rectangle.getHeight() / 2;
-
-        return new Point((int) x, (int) y);
     }
 
     public static Point getStringCenterPos(Rectangle parent, String str, FontMetrics fontMetrics, Graphics g) {
@@ -98,19 +75,6 @@ public final class DrawComponent {
     public static void activateAntialias(Graphics g) {
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    }
-
-    public static BufferedImage colorImage(BufferedImage image, int red, int green, int blue) {
-        BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TRANSLUCENT);
-        Graphics2D graphics = img.createGraphics();
-
-        Color newColor = new Color(red, green, blue, 0);
-
-        graphics.setXORMode(newColor);
-        graphics.drawImage(image, null, 0, 0);
-        graphics.dispose();
-
-        return img;
     }
 
     public static void drawFullsizedImage(Graphics g, JComponent component, Image image) {

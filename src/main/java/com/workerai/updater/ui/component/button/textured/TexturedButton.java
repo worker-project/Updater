@@ -9,14 +9,9 @@ import static com.workerai.updater.ui.component.DrawComponent.*;
 
 public class TexturedButton extends AbstractButton {
     private Image texture;
-
     private Image textureHover;
-
     private Image textureDisabled;
 
-    public TexturedButton(BufferedImage texture) {
-        this(texture, null, null);
-    }
 
     public TexturedButton(BufferedImage texture, BufferedImage textureHover) {
         this(texture, textureHover, null);
@@ -62,45 +57,5 @@ public class TexturedButton extends AbstractButton {
 
             drawCenteredString(g, getText(), this.getBounds());
         }
-    }
-
-    public void setTexture(Image texture) {
-        if (texture == null)
-            throw new IllegalArgumentException("texture == null");
-        this.texture = texture;
-
-        repaint();
-    }
-
-    public void setTextureHover(Image textureHover) {
-        if (textureHover == null)
-            throw new IllegalArgumentException("textureHover == null");
-        this.textureHover = textureHover;
-
-        repaint();
-    }
-
-    public void setTextureDisabled(Image textureDisabled) {
-        if (textureDisabled == null)
-            throw new IllegalArgumentException("textureDisabled == null");
-        this.textureDisabled = textureDisabled;
-
-        repaint();
-    }
-
-    public Image getTexture() {
-        return this.texture;
-    }
-
-    public Image getTextureHover() {
-        return this.textureHover;
-    }
-
-    public Image getTextureDisabled() {
-        return this.textureDisabled;
-    }
-
-    public void setBounds(int x, int y) {
-        this.setBounds(x, y, this.texture.getWidth(this.getParent()), this.texture.getHeight(this.getParent()));
     }
 }

@@ -11,8 +11,8 @@ public class FileManager {
 
     public FileManager(Path updaterDirectory) {
         this.javaFolder = new File(updaterDirectory.toFile(), "java");
-        this.javaSizeFile = new File(updaterDirectory.toFile(), "size");
-        this.zipSizeFile = new File(updaterDirectory.toFile(), "zsize");
+        this.javaSizeFile = new File(updaterDirectory.toFile(), "javaSize");
+        this.zipSizeFile = new File(updaterDirectory.toFile(), "zipSize");
 
     }
 

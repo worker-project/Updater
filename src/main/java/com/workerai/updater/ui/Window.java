@@ -70,7 +70,7 @@ public class Window {
     }
 
     void drawCloseButton(JPanel panel) {
-        TexturedButton closeButton = (TexturedButton) createHoverButton("", 600 - 30 - 15, 15, 30, 30, ButtonCreator.BUTTON_TYPE.CLOSE_TEXTURED);
+        TexturedButton closeButton = (TexturedButton) createHoverButton("", 600 - 30 - 15, 15, 30, 30);
         panel.add(closeButton, null);
     }
 
@@ -93,7 +93,7 @@ public class Window {
     public void progressTextFormatter() {
         FontMetrics fm = progressLabel.getFontMetrics(progressLabel.getFont());
         int width = fm.stringWidth(progressLabel.getText());
-        progressLabel.setBounds(600 / 2 - width / 2 - 5, 295, 280, 80);
+        progressLabel.setBounds(600 / 2 - width / 2 - 5, 293, 280, 80);
     }
 
     public void drawStartPage() {

@@ -7,12 +7,8 @@ import static com.workerai.updater.ui.component.DrawComponent.*;
 
 public class ProgressBar extends AbstractProgressBar {
     private Color background;
-
     private Color foreground;
 
-    public ProgressBar(Color background) {
-        this(background, null);
-    }
 
     public ProgressBar(Color background, Color foreground) {
         if (background == null)
@@ -31,20 +27,11 @@ public class ProgressBar extends AbstractProgressBar {
 
         fillFullsizedRect(g, this, background);
 
-        int fgSize = crossMult(getValue(), getMaximum(), isVertical() ? this.getHeight() : this.getWidth());
+        int fgSize = crossMult(getValue(), getMaximum(), this.getWidth());
 
         if (fgSize > 0) {
             g.setColor(foreground);
-            g.fillRoundRect(0, 0, isVertical() ? this.getWidth() : fgSize, isVertical() ? fgSize : this.getHeight(), 15, 15);
-        }
-
-        if (isStringPainted() && getString() != null) {
-            activateAntialias(g);
-
-            if (getStringColor() != null)
-                g.setColor(getStringColor());
-
-            drawCenteredString(g, getString(), this.getBounds());
+            g.fillRoundRect(0, 0, fgSize, this.getHeight(), 15, 15);
         }
     }
 

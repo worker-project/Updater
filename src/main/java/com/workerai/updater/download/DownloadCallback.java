@@ -8,7 +8,6 @@ import fr.flowarg.flowupdater.download.Step;
 import static com.workerai.updater.utils.ThrowWait.throwWait;
 
 public class DownloadCallback implements IProgressCallback {
-
     private boolean isUpdate = false;
 
     @Override

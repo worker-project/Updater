@@ -10,12 +10,6 @@ public abstract class AbstractProgressBar extends JComponent {
 
     private String string;
 
-    private boolean stringPainted;
-
-    private Color stringColor;
-
-    private boolean vertical = false;
-
     public void setValue(int value) {
         this.value = value;
 
@@ -46,37 +40,5 @@ public abstract class AbstractProgressBar extends JComponent {
 
     public String getString() {
         return string;
-    }
-
-    public void setStringPainted(boolean stringPainted) {
-        this.stringPainted = stringPainted;
-
-        repaint();
-    }
-
-    public boolean isStringPainted() {
-        return stringPainted;
-    }
-
-    public void setStringColor(Color stringColor) {
-        if (stringColor == null)
-            throw new IllegalArgumentException("stringColor == null");
-        this.stringColor = stringColor;
-
-        repaint();
-    }
-
-    public Color getStringColor() {
-        return stringColor;
-    }
-
-    public void setVertical(boolean vertical) {
-        this.vertical = vertical;
-
-        repaint();
-    }
-
-    public boolean isVertical() {
-        return vertical;
     }
 }

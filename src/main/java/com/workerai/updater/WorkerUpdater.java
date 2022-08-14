@@ -18,30 +18,30 @@ import fr.theshark34.openlauncherlib.external.ExternalLauncher;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
 import static com.workerai.updater.utils.PlatformHandler.getSystemName;
 
 public class WorkerUpdater {
-    private static WorkerUpdater INSTANCE;
-    private final ILogger LOGGER;
-    private final Path updaterDirectory = PlatformHandler.createFolder(".WorkerAI", "bin");
-    private final Path downloadDirectory = PlatformHandler.createFolder(".WorkerAI", "bin", "download");
-    private final FileManager fileManager = new FileManager(updaterDirectory);
-    private final DownloadCallback downloadCallback = new DownloadCallback();
+    static WorkerUpdater INSTANCE;
 
-    public static String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
-
-    private static final Window window = new Window();
+    final Path updaterDirectory = PlatformHandler.createFolder(".WorkerAI", "bin");
+    final Path downloadDirectory = PlatformHandler.createFolder(".WorkerAI", "bin", "download");
+    final FileManager fileManager = new FileManager(updaterDirectory);
+    final DownloadCallback downloadCallback = new DownloadCallback();
+    final String DOWNLOAD_URL = "http://185.245.183.191/public/files/WorkerBootstrap/";
+    static final Window window = new Window();
 
     public WorkerUpdater() {
         INSTANCE = this;
-        this.LOGGER = new Logger("[WorkerAI]", updaterDirectory.resolve("logs.log"));
         if (!this.updaterDirectory.toFile().exists()) {
+            new File(updaterDirectory.toString()).mkdirs();
             if (!this.updaterDirectory.toFile().mkdir()) {
-                this.LOGGER.err("Unable to create updater folder");
+                System.out.println("Unable to create updater folder!");
             }
         }
 
@@ -72,7 +72,7 @@ public class WorkerUpdater {
                 .withUpdaterOptions(option)
                 .withProgressCallback(new DownloadCallback())
                 .withPostExecutions(Collections.singletonList(endDownload))
-                .withLogger(LOGGER)
+                //.withLogger(LOGGER)
                 .build();
 
         try {
@@ -111,6 +111,10 @@ public class WorkerUpdater {
         System.exit(0);
     }
 
+    public static WorkerUpdater getInstance() {
+        return INSTANCE;
+    }
+
     public static void main(String[] args) {
         window.drawStartPage();
     }
@@ -127,15 +131,15 @@ public class WorkerUpdater {
         return downloadCallback;
     }
 
-    public static WorkerUpdater getInstance() {
-        return INSTANCE;
-    }
-
-    public ILogger getLogger() {
+    /*public ILogger getLogger() {
         return LOGGER;
-    }
+    }*/
 
     public Window getWindow() {
         return window;
+    }
+
+    public String getDownloadUrl() {
+        return DOWNLOAD_URL;
     }
 }

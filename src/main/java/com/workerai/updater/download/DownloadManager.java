@@ -21,13 +21,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.workerai.updater.WorkerUpdater.DOWNLOAD_URL;
-
 public class DownloadManager {
-    private final String os;
-    private final String arch;
-    private final ArrayList<ExternalFile> externalFiles = new ArrayList<>();
-    private final WorkerUpdater workerUpdater;
+    final String os;
+    final String arch;
+    final ArrayList<ExternalFile> externalFiles = new ArrayList<>();
+    final WorkerUpdater workerUpdater;
 
     public DownloadManager(WorkerUpdater updater, String os, String arch) {
         this.os = os;
@@ -46,31 +44,30 @@ public class DownloadManager {
 
     public void genDownloadFiles() {
         addFiles(getJavaFile());
-        for (ExternalFile extFile : ExternalFile.getExternalFilesFromJson(DOWNLOAD_URL)) {
+        for (ExternalFile extFile : ExternalFile.getExternalFilesFromJson(WorkerUpdater.getInstance().getDownloadUrl())) {
             addFiles(extFile);
         }
     }
 
 
     ExternalFile getJavaFile() {
-        String response = sendRequest();
+        String javaResponse = getJavaVersionFromInfo();
 
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject().get("result").getAsJsonArray().get(0).getAsJsonObject();
+        JsonObject json = JsonParser.parseString(javaResponse).getAsJsonObject().get("result").getAsJsonArray().get(0).getAsJsonObject();
 
         String url = json.get("links").getAsJsonObject().get("pkg_download_redirect").getAsString();
         String name = json.get("filename").getAsString();
         long size = json.get("size").getAsLong();
 
         String urlSha256 = json.get("links").getAsJsonObject().get("pkg_info_uri").getAsString();
-        String infos = getInfosFile(urlSha256);
+        String infos = getJavaFileInfo(urlSha256);
         JsonObject jsoninfo = JsonParser.parseString(infos).getAsJsonObject().get("result").getAsJsonArray().get(0).getAsJsonObject();
         String sha256 = jsoninfo.get("checksum").getAsString();
 
         return new ExternalFile(new File(workerUpdater.getUpdaterDirectory().toFile(), name).getPath(), url, sha256, size, true);
     }
 
-    String sendRequest() {
-        // get correct java version
+    String getJavaVersionFromInfo() {
         try {
             URL url = new URL(String.format("https://api.foojay.io/disco/v3.0/packages/jdks?version=17.0.1&distro=zulu&architecture=%s&archive_type=zip&operating_system=%s&javafx_bundled=false", this.arch, this.os));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -88,14 +85,13 @@ public class DownloadManager {
 
             return response.toString();
         } catch (IOException e) {
-            WorkerUpdater.getInstance().getLogger().err("Java version not found for current OS: " + os + " and current architecture: " + arch);
+            System.out.println("\u001B[31mJava version not found for current OS: \u001B[0m" + os + " \u001B[31mand current architecture: \u001B[0m" + arch);
             System.exit(0);
             return null;
         }
     }
 
-    String getInfosFile(String link) {
-        // get java versions infos sha256, etc...
+    String getJavaFileInfo(String link) {
         try {
             URL url = new URL(link);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -111,8 +107,9 @@ public class DownloadManager {
             in.close();
 
             return response.toString();
+
         } catch (IOException e) {
-            WorkerUpdater.getInstance().getLogger().err("Java version not found for current OS: " + os + " and current architecture: " + arch);
+            System.out.println("\u001B[31mJava version not found for current OS: \u001B[0m" + os + " \u001B[31mand current architecture: \u001B[0m" + arch);
             System.exit(0);
             return null;
         }
