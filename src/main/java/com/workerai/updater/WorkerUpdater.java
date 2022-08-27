@@ -5,8 +5,6 @@ import com.workerai.updater.download.DownloadManager;
 import com.workerai.updater.ui.Window;
 import com.workerai.updater.utils.FileManager;
 import com.workerai.updater.utils.PlatformHandler;
-import fr.flowarg.flowlogger.ILogger;
-import fr.flowarg.flowlogger.Logger;
 import fr.flowarg.flowupdater.FlowUpdater;
 import fr.flowarg.flowupdater.utils.ExternalFileDeleter;
 import fr.flowarg.flowupdater.utils.UpdaterOptions;
@@ -18,9 +16,7 @@ import fr.theshark34.openlauncherlib.external.ExternalLauncher;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -49,8 +45,8 @@ public class WorkerUpdater {
     }
 
     public void startUpdateProcess() {
-        fileManager.createFile(fileManager.javaSizeFile);
-        fileManager.createFile(fileManager.zipSizeFile);
+        fileManager.createFileSize(fileManager.javaSizeFile);
+        fileManager.createFileSize(fileManager.zipSizeFile);
 
         DownloadManager downloadManager = new DownloadManager(this, getSystemName(), System.getProperty("os.arch"));
         downloadManager.genDownloadFiles();

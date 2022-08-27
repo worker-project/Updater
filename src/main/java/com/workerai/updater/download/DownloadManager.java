@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.workerai.updater.utils.ConstantUtils.javaLink;
+
 public class DownloadManager {
     final String os;
     final String arch;
@@ -69,7 +71,7 @@ public class DownloadManager {
 
     String getJavaVersionFromInfo() {
         try {
-            URL url = new URL(String.format("https://api.foojay.io/disco/v3.0/packages/jdks?version=17.0.1&distro=zulu&architecture=%s&archive_type=zip&operating_system=%s&javafx_bundled=false", this.arch, this.os));
+            URL url = new URL(String.format(javaLink, this.arch, this.os));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
@@ -145,8 +147,8 @@ public class DownloadManager {
         FileManager fileManager = workerUpdater.getFileManager();
         if (p != null) {
             if (!fileManager.javaFolder.exists() ||
-                    (fileManager.javaFolder.exists() && !fileManager.readSizeFile(fileManager.javaSizeFile).equals(Long.toString(fileManager.getJavaFolderSize())))
-            || (p.toFile().exists() && !fileManager.readSizeFile(fileManager.zipSizeFile).equals(Long.toString(fileManager.getFolderSize(p.toFile()))))) {
+                    (fileManager.javaFolder.exists() && !fileManager.getFileSize(fileManager.javaSizeFile).equals(Long.toString(fileManager.getJavaFolderSize())))
+            || (p.toFile().exists() && !fileManager.getFileSize(fileManager.zipSizeFile).equals(Long.toString(fileManager.getFolderSize(p.toFile()))))) {
 
                 FileUtils.deleteDirectory(fileManager.javaFolder.toPath());
 
@@ -161,8 +163,8 @@ public class DownloadManager {
                 }
                 WorkerUpdater.getInstance().getDownloadCallback().step(Step.END_RENAME);
 
-                fileManager.writeSizeFile(fileManager.javaSizeFile, Long.toString(fileManager.getJavaFolderSize()));
-                fileManager.writeSizeFile(fileManager.zipSizeFile, Long.toString(fileManager.getFolderSize(p.toFile())));
+                fileManager.saveSizeInFile(fileManager.javaSizeFile, Long.toString(fileManager.getJavaFolderSize()));
+                fileManager.saveSizeInFile(fileManager.zipSizeFile, Long.toString(fileManager.getFolderSize(p.toFile())));
             }
         }
     }

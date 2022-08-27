@@ -19,11 +19,11 @@ import static com.workerai.updater.utils.ColorManager.DARK_YELLOW;
 import static com.workerai.updater.utils.ThrowWait.throwWait;
 
 public class Window {
-    private final JFrame startFrame;
-    private final JFrame updateFrame;
-    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private ProgressBar progressBar;
-    private final JLabel progressLabel = new JLabel("");
+    final JFrame startFrame;
+    final JFrame updateFrame;
+    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    ProgressBar progressBar;
+    final JLabel progressLabel = new JLabel("");
 
     public Window() {
         startFrame = new JFrame();

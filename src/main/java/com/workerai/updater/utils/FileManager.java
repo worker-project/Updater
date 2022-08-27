@@ -16,28 +16,28 @@ public class FileManager {
 
     }
 
-    public void createFile(File f) {
+    public void createFileSize(File file) {
         try {
-            if (!f.exists()) {
-                f.createNewFile();
-                writeSizeFile(f, "0");
+            if (!file.exists()) {
+                file.createNewFile();
+                saveSizeInFile(file, "0");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void writeSizeFile(File f, String s) {
+    public void saveSizeInFile(File file, String size) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-            writer.write(s);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write(size);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String readSizeFile(File file) {
+    public String getFileSize(File file) {
         Scanner reader;
         try {
             reader = new Scanner(file);
@@ -51,12 +51,12 @@ public class FileManager {
         return getFolderSize(this.javaFolder);
     }
 
-    public long getFolderSize(File d) {
+    public long getFolderSize(File directory) {
         long length = 0;
-        File[] files = d.listFiles();
+        File[] files = directory.listFiles();
 
-        if (!d.isDirectory()) {
-            return d.length();
+        if (!directory.isDirectory()) {
+            return directory.length();
         }
 
         int count = files == null ? 0 : files.length;
